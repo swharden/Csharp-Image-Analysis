@@ -2,18 +2,12 @@ trigger:
   - master
 
 pool:
-  vmImage: "ubuntu-latest"
+  vmImage: "windows-latest"
 
 variables:
   solution: "src/*.sln"
 
 steps:
-  - task: UseDotNet@2
-    displayName: "Use .NET 5"
-    inputs:
-      packageType: "sdk"
-      version: "5.x"
-
   - task: NuGetToolInstaller@1
     displayName: "Install NuGet"
 
