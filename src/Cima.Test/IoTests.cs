@@ -33,8 +33,8 @@ namespace Cima.Test
         [Test]
         public void Test_Dimensions_RGB()
         {
-            var bmp = IO.LoadBitmap(PATH_RGB);
-            var bytes3d = IO.GetBytes3D(bmp);
+            var bmp = IO.LoadARGB(PATH_RGB);
+            var bytes3d = IO.LoadImage3D(bmp);
             Assert.AreEqual(300, bytes3d.GetLength(0));
             Assert.AreEqual(451, bytes3d.GetLength(1));
             Assert.AreEqual(3, bytes3d.GetLength(2));
@@ -43,8 +43,9 @@ namespace Cima.Test
         [Test]
         public void Test_Dimensions_Gray()
         {
-            var bmp = IO.LoadBitmap(PATH_GRAY);
-            var bytes2d = IO.GetBytes2D(bmp);
+            Bitmap bmp = IO.LoadARGB(PATH_GRAY);
+            Console.WriteLine(bmp.PixelFormat);
+            var bytes2d = IO.LoadImage3D(bmp);
             Assert.AreEqual(303, bytes2d.GetLength(0));
             Assert.AreEqual(384, bytes2d.GetLength(1));
         }
@@ -52,27 +53,18 @@ namespace Cima.Test
         [Test]
         public void Test_Flatten_RGB()
         {
-            var bmp = IO.LoadBitmap(PATH_RGB);
-            var bytes3d = IO.GetBytes3D(bmp);
+            var bmp = IO.LoadARGB(PATH_RGB);
+            var bytes3d = IO.LoadImage3D(bmp);
             var bytes1d = Operations.Flatten(bytes3d);
             Assert.AreEqual(bmp.Width * bmp.Height * 3, bytes1d.Length);
-        }
-
-        [Test]
-        public void Test_Flatten_Gray()
-        {
-            var bmp = IO.LoadBitmap(PATH_GRAY);
-            var bytes2d = IO.GetBytes2D(bmp);
-            var bytes1d = Operations.Flatten(bytes2d);
-            Assert.AreEqual(bmp.Width * bmp.Height, bytes1d.Length);
         }
 
         [Test]
         public void Test_Hash_RGB()
         {
             // compare hash to that calculated with Python/PIL
-            var bmp = IO.LoadBitmap(PATH_RGB);
-            var bytes3d = IO.GetBytes3D(bmp);
+            var bmp = IO.LoadARGB(PATH_RGB);
+            var bytes3d = IO.LoadImage3D(bmp);
             var bytes1d = Operations.Flatten(bytes3d);
             string hash = Operations.MD5(bytes1d);
             Assert.AreEqual("4cbc8458da90b6c4b2dcf19e51656619", hash);
@@ -82,9 +74,11 @@ namespace Cima.Test
         public void Test_Hash_Gray()
         {
             // compare hash to that calculated with Python/PIL
-            var bmp = IO.LoadBitmap(PATH_GRAY);
-            var bytes2d = IO.GetBytes2D(bmp);
-            var bytes1d = Operations.Flatten(bytes2d);
+            Bitmap bmp = IO.LoadARGB(PATH_GRAY);
+            byte[,,] bytes3d = IO.LoadImage3D(bmp);
+            byte[,] bytes2d = IO.GetChannel(bytes3d);
+            byte[] bytes1d = Operations.Flatten(bytes2d);
+            Console.WriteLine(bytes1d.Length);
             string hash = Operations.MD5(bytes1d);
             Assert.AreEqual("651a9e413b9cc780d6ae9c5eca027c76", hash);
         }
@@ -93,13 +87,13 @@ namespace Cima.Test
         public void Test_Save_RGB()
         {
             string saveFilePath = $"test_{Path.GetFileNameWithoutExtension(PATH_RGB)}.png";
-            var bmp1 = IO.LoadBitmap(PATH_RGB);
-            var bytes1 = IO.GetBytes3D(bmp1);
+            var bmp1 = IO.LoadARGB(PATH_RGB);
+            var bytes1 = IO.LoadImage3D(bmp1);
             var bmp2 = IO.BitmapFromBytes3D(bytes1);
             IO.SavePng(bmp2, saveFilePath);
 
-            var bmp = IO.LoadBitmap(saveFilePath);
-            var bytes2d = IO.GetBytes3D(bmp);
+            var bmp = IO.LoadARGB(saveFilePath);
+            var bytes2d = IO.LoadImage3D(bmp);
             var bytes1d = Operations.Flatten(bytes2d);
             string hash = Operations.MD5(bytes1d);
             Assert.AreEqual("4cbc8458da90b6c4b2dcf19e51656619", hash);
@@ -109,13 +103,14 @@ namespace Cima.Test
         public void Test_Save_Gray()
         {
             string saveFilePath = $"test_{Path.GetFileNameWithoutExtension(PATH_GRAY)}.png";
-            var bmp1 = IO.LoadBitmap(PATH_GRAY);
-            var bytes1 = IO.GetBytes2D(bmp1);
-            var bmp2 = IO.BitmapFromBytes2D(bytes1);
+            var bmp1 = IO.LoadARGB(PATH_GRAY);
+            var bytes1 = IO.LoadImage3D(bmp1);
+            var bmp2 = IO.BitmapFromBytes3D(bytes1);
             IO.SavePng(bmp2, saveFilePath);
 
-            var bmp = IO.LoadBitmap(saveFilePath);
-            var bytes2d = IO.GetBytes2D(bmp);
+            var bmp = IO.LoadARGB(saveFilePath);
+            var bytes3d = IO.LoadImage3D(bmp);
+            var bytes2d = IO.GetChannel(bytes3d);
             var bytes1d = Operations.Flatten(bytes2d);
             string hash = Operations.MD5(bytes1d);
             Assert.AreEqual("651a9e413b9cc780d6ae9c5eca027c76", hash);
@@ -167,8 +162,8 @@ namespace Cima.Test
             string loadFilePath = Path.Combine(imageFolderPath, filename);
 
             // load an input image of known size
-            var referenceBitmap = IO.LoadBitmap(loadFilePath);
-            var originalBytes2d = IO.GetBytes3D(referenceBitmap);
+            var referenceBitmap = IO.LoadARGB(loadFilePath);
+            var originalBytes2d = IO.LoadImage3D(referenceBitmap);
             Assert.AreEqual(originalBytes2d.GetLength(0), height);
             Assert.AreEqual(originalBytes2d.GetLength(1), width);
             string originalHash = Operations.MD5(originalBytes2d);
@@ -176,8 +171,8 @@ namespace Cima.Test
             // save the image to a test file and re-load it
             string saveFilePath = $"test_{filename}.png";
             IO.SavePng(referenceBitmap, saveFilePath);
-            var newBitmap = IO.LoadBitmap(saveFilePath);
-            var newBytes2d = IO.GetBytes3D(newBitmap);
+            var newBitmap = IO.LoadARGB(saveFilePath);
+            var newBytes2d = IO.LoadImage3D(newBitmap);
             string newHash = Operations.MD5(newBytes2d);
 
             // ensure the loaded data is identical

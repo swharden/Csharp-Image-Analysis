@@ -7,6 +7,9 @@ namespace Cima
 {
     public static class Operations
     {
+        /// <summary>
+        /// Reshape a 2D array into a 1D array
+        /// </summary>
         public static byte[] Flatten(byte[,] input)
         {
             int height = input.GetLength(0);
@@ -22,6 +25,9 @@ namespace Cima
             return output;
         }
 
+        /// <summary>
+        /// Reshape a 3D array into a 1D array
+        /// </summary>
         public static byte[] Flatten(byte[,,] input)
         {
             int height = input.GetLength(0);
