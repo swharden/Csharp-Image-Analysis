@@ -10,37 +10,34 @@ namespace Cima
     public static class IO
     {
         /// <summary>
-        /// Load a bitmap with System.Drawing.Common so the caller doesn't have to.
-        /// System.Drawing always returns a 32-bit ARGB regardless of the input file format.
+        /// Save an image as a PNG.
         /// </summary>
-        public static Bitmap LoadARGB(string filename) => new(filename);
+        public static void SavePng(byte[,,] bytes, string path) => BitmapFromBytes3D(bytes).Save(path, ImageFormat.Png);
 
         /// <summary>
-        /// Save an image as a PNG by interacting with System.Drawing so the caller doesn't have to.
+        /// Load the image file as a 3D byte array (height, width, channel).
+        /// The number of channels is dynamic based on the input image format.
         /// </summary>
-        public static void SavePng(Bitmap bmp, string path) => bmp.Save(path, ImageFormat.Png);
-
-        /// <summary>
-        /// Return the stride of a bitmap with the given dimensions.
-        /// The stride will be padded as needed to ensure it is a multiple of 4.
-        /// </summary>
-        /// <returns></returns>
-        public static int Stride(int width, int bytesPerPixel)
+        public static byte[,,] LoadImage(string filePath)
         {
-            int stride = width * bytesPerPixel;
-            while (stride % 4 > 0)
-                stride += 1;
-            return stride;
+            Bitmap bmp = new(filePath);
+            return LoadImage(bmp);
         }
 
         /// <summary>
         /// Convert a bitmap to a 3D byte array (height, width, channel).
         /// The number of channels is dynamic based on the input image format.
         /// </summary>
-        public static byte[,,] LoadImage3D(Bitmap bmp)
+        public static byte[,,] LoadImage(Bitmap bmp)
         {
-            // TODO: check for all possible bitmap pixel formats and throw for the weird ones
-            int bpp = System.Drawing.Image.GetPixelFormatSize(bmp.PixelFormat) / 8;
+            int bpp = bmp.PixelFormat switch
+            {
+                PixelFormat.Format24bppRgb => 3,
+                PixelFormat.Format32bppRgb => 4,
+                PixelFormat.Format32bppArgb => 4,
+                PixelFormat.Format32bppPArgb => 4,
+                _ => throw new NotImplementedException($"unsupported pixel format: {bmp.PixelFormat}")
+            };
 
             Rectangle rect = new(0, 0, bmp.Width, bmp.Height);
             BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
@@ -91,7 +88,7 @@ namespace Cima
                 _ => throw new NotImplementedException($"unsupported bytes per pixel ({bpp})"),
             };
 
-            int stride = Stride(width, bpp);
+            int stride = 4 * ((width * bpp + 3) / 4);
             byte[] output = new byte[height * stride];
             for (int y = 0; y < height; y++)
                 for (int x = 0; x < width; x++)

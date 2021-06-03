@@ -9,32 +9,10 @@ namespace Cima.Test
 {
     public class Tests
     {
-        public static readonly string PATH_RGB =
-            Path.GetFullPath(
-                Path.Combine(
-                    TestContext.CurrentContext.TestDirectory,
-                    "../../../../../data/images/cat.png")
-                );
-
-        public static readonly string PATH_GRAY =
-            Path.GetFullPath(
-                Path.Combine(
-                    TestContext.CurrentContext.TestDirectory,
-                    "../../../../../data/images/coins.png")
-                );
-
         [Test]
-        public void Test_SampleImages_Exist()
+        public void Test_Dimensions_MatchExpected()
         {
-            Assert.That(File.Exists(PATH_RGB), PATH_RGB);
-            Assert.That(File.Exists(PATH_GRAY), PATH_GRAY);
-        }
-
-        [Test]
-        public void Test_Dimensions_RGB()
-        {
-            var bmp = IO.LoadARGB(PATH_RGB);
-            var bytes3d = IO.LoadImage3D(bmp);
+            byte[,,] bytes3d = IO.LoadImage(SampleImage.Path.Cat);
             Assert.AreEqual(300, bytes3d.GetLength(0));
             Assert.AreEqual(451, bytes3d.GetLength(1));
             Assert.AreEqual(3, bytes3d.GetLength(2));
@@ -43,28 +21,16 @@ namespace Cima.Test
         [Test]
         public void Test_Dimensions_Gray()
         {
-            Bitmap bmp = IO.LoadARGB(PATH_GRAY);
-            Console.WriteLine(bmp.PixelFormat);
-            var bytes2d = IO.LoadImage3D(bmp);
+            var bytes2d = IO.LoadImage(SampleImage.Path.Coins);
             Assert.AreEqual(303, bytes2d.GetLength(0));
             Assert.AreEqual(384, bytes2d.GetLength(1));
-        }
-
-        [Test]
-        public void Test_Flatten_RGB()
-        {
-            var bmp = IO.LoadARGB(PATH_RGB);
-            var bytes3d = IO.LoadImage3D(bmp);
-            var bytes1d = Operations.Flatten(bytes3d);
-            Assert.AreEqual(bmp.Width * bmp.Height * 3, bytes1d.Length);
         }
 
         [Test]
         public void Test_Hash_RGB()
         {
             // compare hash to that calculated with Python/PIL
-            var bmp = IO.LoadARGB(PATH_RGB);
-            var bytes3d = IO.LoadImage3D(bmp);
+            var bytes3d = IO.LoadImage(SampleImage.Path.Cat);
             var bytes1d = Operations.Flatten(bytes3d);
             string hash = Operations.MD5(bytes1d);
             Assert.AreEqual("4cbc8458da90b6c4b2dcf19e51656619", hash);
@@ -74,8 +40,7 @@ namespace Cima.Test
         public void Test_Hash_Gray()
         {
             // compare hash to that calculated with Python/PIL
-            Bitmap bmp = IO.LoadARGB(PATH_GRAY);
-            byte[,,] bytes3d = IO.LoadImage3D(bmp);
+            byte[,,] bytes3d = IO.LoadImage(SampleImage.Path.Coins);
             byte[,] bytes2d = IO.GetChannel(bytes3d);
             byte[] bytes1d = Operations.Flatten(bytes2d);
             Console.WriteLine(bytes1d.Length);
@@ -86,61 +51,31 @@ namespace Cima.Test
         [Test]
         public void Test_Save_RGB()
         {
-            string saveFilePath = $"test_{Path.GetFileNameWithoutExtension(PATH_RGB)}.png";
-            var bmp1 = IO.LoadARGB(PATH_RGB);
-            var bytes1 = IO.LoadImage3D(bmp1);
-            var bmp2 = IO.BitmapFromBytes3D(bytes1);
-            IO.SavePng(bmp2, saveFilePath);
+            string saveFilePath = "test_save_rgb.png";
 
-            var bmp = IO.LoadARGB(saveFilePath);
-            var bytes2d = IO.LoadImage3D(bmp);
-            var bytes1d = Operations.Flatten(bytes2d);
-            string hash = Operations.MD5(bytes1d);
-            Assert.AreEqual("4cbc8458da90b6c4b2dcf19e51656619", hash);
+            byte[,,] originalBytes = IO.LoadImage(SampleImage.Path.Cat);
+            string originalHash = Operations.MD5(originalBytes);
+            Assert.AreEqual("4cbc8458da90b6c4b2dcf19e51656619", originalHash);
+            IO.SavePng(originalBytes, saveFilePath);
+
+            byte[,,] newBytes = IO.LoadImage(saveFilePath);
+            string newHash = Operations.MD5(newBytes);
+            Assert.AreEqual(originalHash, newHash);
         }
 
         [Test]
         public void Test_Save_Gray()
         {
-            string saveFilePath = $"test_{Path.GetFileNameWithoutExtension(PATH_GRAY)}.png";
-            var bmp1 = IO.LoadARGB(PATH_GRAY);
-            var bytes1 = IO.LoadImage3D(bmp1);
-            var bmp2 = IO.BitmapFromBytes3D(bytes1);
-            IO.SavePng(bmp2, saveFilePath);
+            string saveFilePath = "test_save_gray.png";
 
-            var bmp = IO.LoadARGB(saveFilePath);
-            var bytes3d = IO.LoadImage3D(bmp);
-            var bytes2d = IO.GetChannel(bytes3d);
-            var bytes1d = Operations.Flatten(bytes2d);
+            byte[,,] bytes1 = IO.LoadImage(SampleImage.Path.Coins);
+            IO.SavePng(bytes1, saveFilePath);
+
+            byte[,,] bytes3d = IO.LoadImage(saveFilePath);
+            byte[,] bytes2d = IO.GetChannel(bytes3d);
+            byte[] bytes1d = Operations.Flatten(bytes2d);
             string hash = Operations.MD5(bytes1d);
             Assert.AreEqual("651a9e413b9cc780d6ae9c5eca027c76", hash);
-        }
-
-        [TestCase("cat-119x79.png")]
-        [TestCase("cat-120x80.png")]
-        [TestCase("cat-121x80.png")]
-        [TestCase("cat-122x81.png")]
-        [TestCase("cat-123x82.png")]
-        [TestCase("cat-124x82.png")]
-        [TestCase("rgb-321x217.png")]
-        [TestCase("rgba-321x217.png")]
-        public void Test_StideCalculation_MatchesMeasured(string filename)
-        {
-            string imageFolderPath = Path.Combine(TestContext.CurrentContext.TestDirectory, $"../../../../../data/images/");
-            string loadFilePath = Path.Combine(imageFolderPath, filename);
-
-            var bmp = new Bitmap(loadFilePath);
-
-            int bpp = bmp.PixelFormat switch
-            {
-                PixelFormat.Format24bppRgb => 3,
-                PixelFormat.Format32bppArgb => 4,
-                _ => throw new NotImplementedException($"unsupported bytes per pixel ({bmp.PixelFormat})"),
-            };
-
-            Rectangle rect = new(0, 0, bmp.Width, bmp.Height);
-            BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadOnly, bmp.PixelFormat);
-            Assert.AreEqual(bmpData.Stride, IO.Stride(bmp.Width, bpp));
         }
 
         [TestCase("cat-119x79.png", 119, 79)]
@@ -151,7 +86,7 @@ namespace Cima.Test
         [TestCase("cat-124x82.png", 124, 82)]
         [TestCase("rgb-321x217.png", 321, 217)]
         [TestCase("rgba-321x217.png", 321, 217)]
-        public void Test_SavedData_MatchesOriginal(string filename, int width, int height)
+        public void Test_Save_MatchesOriginal(string filename, int width, int height)
         {
             // Even though bitmap images can be any width their bytes in memory always use widths that are multiples of 4.
             // This means there will be empty bytes in memory for bitmaps with widths that aren't an even multiple of 4.
@@ -162,18 +97,16 @@ namespace Cima.Test
             string loadFilePath = Path.Combine(imageFolderPath, filename);
 
             // load an input image of known size
-            var referenceBitmap = IO.LoadARGB(loadFilePath);
-            var originalBytes2d = IO.LoadImage3D(referenceBitmap);
-            Assert.AreEqual(originalBytes2d.GetLength(0), height);
-            Assert.AreEqual(originalBytes2d.GetLength(1), width);
-            string originalHash = Operations.MD5(originalBytes2d);
+            byte[,,] bytes1 = IO.LoadImage(loadFilePath);
+            Assert.AreEqual(bytes1.GetLength(0), height);
+            Assert.AreEqual(bytes1.GetLength(1), width);
+            string originalHash = Operations.MD5(bytes1);
 
             // save the image to a test file and re-load it
             string saveFilePath = $"test_{filename}.png";
-            IO.SavePng(referenceBitmap, saveFilePath);
-            var newBitmap = IO.LoadARGB(saveFilePath);
-            var newBytes2d = IO.LoadImage3D(newBitmap);
-            string newHash = Operations.MD5(newBytes2d);
+            IO.SavePng(bytes1, saveFilePath);
+            byte[,,] newBitmap = IO.LoadImage(saveFilePath);
+            string newHash = Operations.MD5(newBitmap);
 
             // ensure the loaded data is identical
             Assert.AreEqual(originalHash, newHash);
