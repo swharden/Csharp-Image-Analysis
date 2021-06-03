@@ -23,14 +23,6 @@ namespace Cima.Test
                     "../../../../../data/images/coins.png")
                 );
 
-        private static string GetFileHash(string filePath)
-        {
-            var md5 = System.Security.Cryptography.MD5.Create();
-            using var stream = File.OpenRead(filePath);
-            byte[] bytes = md5.ComputeHash(stream);
-            return string.Join("", md5.ComputeHash(bytes).Select(x => x.ToString("x2")).ToArray()); ;
-        }
-
         [Test]
         public void Test_SampleImages_Exist()
         {
