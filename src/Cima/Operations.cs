@@ -44,5 +44,9 @@ namespace Cima
             var md5 = System.Security.Cryptography.MD5.Create();
             return string.Join("", md5.ComputeHash(bytes).Select(x => x.ToString("x2")).ToArray());
         }
+
+        public static string MD5(byte[,] bytes) => MD5(Flatten(bytes));
+
+        public static string MD5(byte[,,] bytes) => MD5(Flatten(bytes));
     }
 }
