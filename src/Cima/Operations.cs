@@ -10,17 +10,17 @@ namespace Cima
         /// <summary>
         /// Reshape a 2D array into a 1D array
         /// </summary>
-        public static byte[] Flatten(byte[,] input)
+        public static T[] Flatten<T>(T[,] input)
         {
             int height = input.GetLength(0);
             int width = input.GetLength(1);
-            byte[] output = new byte[height * width];
+            T[] output = new T[height * width];
 
             ulong pos = 0;
 
             for (int y = 0; y < height; y++)
                 for (int x = 0; x < width; x++)
-                     output[pos++] = input[y, x];
+                    output[pos++] = input[y, x];
 
             return output;
         }
@@ -54,5 +54,36 @@ namespace Cima
         public static string MD5(byte[,] bytes) => MD5(Flatten(bytes));
 
         public static string MD5(byte[,,] bytes) => MD5(Flatten(bytes));
+
+        /// <summary>
+        /// Fill all values of an array with the given value IN PLACE
+        /// </summary>
+        public static void ApplyFill(double[,] input, double value)
+        {
+            for (int i = 0; i < input.GetLength(0); i++)
+                for (int j = 0; j < input.GetLength(1); j++)
+                    input[i, j] = value;
+        }
+
+        /// <summary>
+        /// Expand the image by N pixels in all directions.
+        /// </summary>
+        public static double[,] Expand(double[,] input, int n, double edgeColor = 0)
+        {
+            int width = input.GetLength(1);
+            int height = input.GetLength(0);
+            int newWidth = width + n * 2;
+            int newHeight = height + n * 2;
+
+            double[,] output = new double[newHeight, newWidth];
+            if (edgeColor != 0)
+                ApplyFill(output, edgeColor);
+
+            for (int i = 0; i < height; i++)
+                for (int j = 0; j < width; j++)
+                    output[i + n, j + n] = input[i, j];
+
+            return output;
+        }
     }
 }
