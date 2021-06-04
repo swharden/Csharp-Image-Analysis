@@ -34,7 +34,7 @@ namespace Cima.Test
             double[,] original = Generate2D.Random(rand, 300, 200);
             double[,] expanded = Operations.Expand(original, 10);
             double[,] contracted = Operations.Contract(expanded, 10);
-            Assert.AreEqual(Operations.MD5(original), Operations.MD5(contracted));
+            Assert.AreEqual(original, contracted);
         }
     }
 }

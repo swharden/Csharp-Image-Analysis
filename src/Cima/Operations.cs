@@ -60,11 +60,21 @@ namespace Cima
         /// <summary>
         /// Fill all values of an array with the given value IN PLACE
         /// </summary>
-        public static void ApplyFill(double[,] input, double value)
+        public static void FillInPlace(double[,] input, double value)
         {
             for (int i = 0; i < input.GetLength(0); i++)
                 for (int j = 0; j < input.GetLength(1); j++)
                     input[i, j] = value;
+        }
+
+        /// <summary>
+        /// Add a fixed value to every element in place
+        /// </summary>
+        public static void AddInPlace(double[,] input, double value)
+        {
+            for (int i = 0; i < input.GetLength(0); i++)
+                for (int j = 0; j < input.GetLength(1); j++)
+                    input[i, j] += value;
         }
 
         /// <summary>
@@ -79,7 +89,7 @@ namespace Cima
 
             double[,] output = new double[newHeight, newWidth];
             if (edgeColor != 0)
-                ApplyFill(output, edgeColor);
+                FillInPlace(output, edgeColor);
 
             for (int i = 0; i < height; i++)
                 for (int j = 0; j < width; j++)

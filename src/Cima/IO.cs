@@ -30,6 +30,30 @@ namespace Cima
         }
 
         /// <summary>
+        /// Load the image file as a 2D byte array taking just the red channel.
+        /// </summary>
+        public static double[,] LoadImageGrayscaleFloating(string filePath)
+        {
+            Bitmap bmp = new(filePath);
+            byte[,,] bytes3d = LoadImage(bmp);
+            byte[,] bytes2d = GetChannel(bytes3d);
+            return BytesToFloating(bytes2d);
+        }
+
+        public static double[,] BytesToFloating(byte[,] input)
+        {
+            int height = input.GetLength(0);
+            int width = input.GetLength(1);
+
+            double[,] output = new double[height, width];
+            for (int y = 0; y < height; y++)
+                for (int x = 0; x < width; x++)
+                    output[y, x] = (double)input[y, x] / 255;
+
+            return output;
+        }
+
+        /// <summary>
         /// Convert a bitmap to a 3D byte array (height, width, channel).
         /// The number of channels is dynamic based on the input image format.
         /// </summary>
