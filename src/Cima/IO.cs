@@ -15,6 +15,11 @@ namespace Cima
         public static void SavePng(byte[,,] bytes, string path) => BitmapFromBytes3D(bytes).Save(path, ImageFormat.Png);
 
         /// <summary>
+        /// Save 2D image data as a grayscale PNG.
+        /// </summary>
+        public static void SavePng(double[,] data, string path) => BitmapFromBytes2D(data).Save(path, ImageFormat.Png);
+
+        /// <summary>
         /// Load the image file as a 3D byte array (height, width, channel).
         /// The number of channels is dynamic based on the input image format.
         /// </summary>
@@ -73,7 +78,43 @@ namespace Cima
         }
 
         /// <summary>
-        /// Convert a 3D array to a multichannel bitmap
+        /// Convert a double into a valid intensity byte
+        /// </summary>
+        public static byte ValidByte(double input)
+        {
+            int value = (int)(input * 256);
+            if (value <= 0)
+                return 0;
+            if (value >= 255)
+                return 255;
+            return (byte)value;
+        }
+
+        /// <summary>
+        /// Convert a 2D array (Grayscale) to a Bitmap
+        /// </summary>
+        public static Bitmap BitmapFromBytes2D(double[,] data)
+        {
+            // TODO: make this more effecient by using indexed color
+            int height = data.GetLength(0);
+            int width = data.GetLength(1);
+            byte[,,] bytes = new byte[height, width, 3];
+            for (int i = 0; i < height; i++)
+            {
+                for (int j = 0; j < width; j++)
+                {
+                    byte b = ValidByte(data[i, j]);
+                    bytes[i, j, 0] = b;
+                    bytes[i, j, 1] = b;
+                    bytes[i, j, 2] = b;
+                }
+            }
+
+            return BitmapFromBytes3D(bytes);
+        }
+
+        /// <summary>
+        /// Convert a 3D array (RGB) to a Bitmap
         /// </summary>
         public static Bitmap BitmapFromBytes3D(byte[,,] input)
         {

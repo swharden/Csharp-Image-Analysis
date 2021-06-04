@@ -20,7 +20,7 @@ namespace Cima
                 for (int x = 0; x < width; x++)
                 {
                     double val = vals[y, x];
-                    sb.Append($"{val, 7}");
+                    sb.Append($"{val, 7:#.0000}");
                 }
             }
             return sb.ToString();

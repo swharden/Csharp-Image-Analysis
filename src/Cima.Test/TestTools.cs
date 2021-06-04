@@ -12,7 +12,7 @@ namespace Cima.Test
             string callingMethod = stackTrace.GetFrame(1).GetMethod().Name;
             string path = System.IO.Path.GetFullPath($"{callingMethod}.png");
             IO.SavePng(data, path);
-            Console.WriteLine($"Saved: {path}");
+            Console.WriteLine($"Saved:\n{path}");
         }
     }
 }
