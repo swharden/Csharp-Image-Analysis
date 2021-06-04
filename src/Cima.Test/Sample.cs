@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Cima.Test
 {
-    public static class SampleImage
+    public static class Sample
     {
         private static readonly string ImageFolder = System.IO.Path.GetFullPath(
                 System.IO.Path.Combine(
@@ -54,5 +54,15 @@ namespace Cima.Test
             }
         }
 
+        public static class Data
+        {
+            public static double[,] Random_5x4 => new double[,]
+            {
+                {9.7,1.4,7.9,3.5,3.1},
+                {6.4,2.0,6.3,4.8,4.2},
+                {4.5,2.4,3.0,9.2,2.4},
+                {5.0,7.6,2.1,5.8,5.4},
+            };
+        }
     }
 }
