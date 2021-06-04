@@ -26,5 +26,15 @@ namespace Cima.Test
             double[,] expanded = Operations.Expand(data, 10, 1);
             Assert.Greater(ImageMath.Mean(expanded), ImageMath.Mean(data));
         }
+
+        [Test]
+        public void Test_Contract_IsNonDestructive()
+        {
+            Random rand = new(0);
+            double[,] original = Generate2D.Random(rand, 300, 200);
+            double[,] expanded = Operations.Expand(original, 10);
+            double[,] contracted = Operations.Contract(expanded, 10);
+            Assert.AreEqual(Operations.MD5(original), Operations.MD5(contracted));
+        }
     }
 }

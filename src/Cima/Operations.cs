@@ -51,6 +51,8 @@ namespace Cima
             return string.Join("", md5.ComputeHash(bytes).Select(x => x.ToString("x2")).ToArray());
         }
 
+        public static string MD5(double[,] bytes) => MD5(Flatten(bytes).SelectMany(x => BitConverter.GetBytes(x)).ToArray());
+
         public static string MD5(byte[,] bytes) => MD5(Flatten(bytes));
 
         public static string MD5(byte[,,] bytes) => MD5(Flatten(bytes));
@@ -66,7 +68,7 @@ namespace Cima
         }
 
         /// <summary>
-        /// Expand the image by N pixels in all directions.
+        /// Expand the image by N pixels on all sides.
         /// </summary>
         public static double[,] Expand(double[,] input, int n, double edgeColor = 0)
         {
@@ -82,6 +84,25 @@ namespace Cima
             for (int i = 0; i < height; i++)
                 for (int j = 0; j < width; j++)
                     output[i + n, j + n] = input[i, j];
+
+            return output;
+        }
+
+        /// <summary>
+        /// Remove N pixels from all sides of the image.
+        /// </summary>
+        public static double[,] Contract(double[,] input, int n)
+        {
+            int width = input.GetLength(1);
+            int height = input.GetLength(0);
+            int newWidth = width - n * 2;
+            int newHeight = height - n * 2;
+
+            double[,] output = new double[newHeight, newWidth];
+
+            for (int i = 0; i < newHeight; i++)
+                for (int j = 0; j < newWidth; j++)
+                    output[i, j] = input[i + n, j + n];
 
             return output;
         }
