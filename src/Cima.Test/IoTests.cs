@@ -51,7 +51,7 @@ namespace Cima.Test
         [Test]
         public void Test_Save_RGB()
         {
-            string saveFilePath = "test_save_rgb.png";
+            string saveFilePath = TestTools.GetOutputFilePath("test_save_rgb.png");
 
             byte[,,] originalBytes = IO.LoadImage(Sample.Path.Cat);
             string originalHash = Cima.Operations.MD5(originalBytes);
@@ -66,7 +66,7 @@ namespace Cima.Test
         [Test]
         public void Test_Save_Gray()
         {
-            string saveFilePath = "test_save_gray.png";
+            string saveFilePath = TestTools.GetOutputFilePath("test_save_gray.png");
 
             byte[,,] bytes1 = IO.LoadImage(Sample.Path.Coins);
             IO.SavePng(bytes1, saveFilePath);
@@ -103,7 +103,7 @@ namespace Cima.Test
             string originalHash = Cima.Operations.MD5(bytes1);
 
             // save the image to a test file and re-load it
-            string saveFilePath = $"test_{filename}.png";
+            string saveFilePath = TestTools.GetOutputFilePath($"test_{filename}.png");
             IO.SavePng(bytes1, saveFilePath);
             byte[,,] newBitmap = IO.LoadImage(saveFilePath);
             string newHash = Cima.Operations.MD5(newBitmap);

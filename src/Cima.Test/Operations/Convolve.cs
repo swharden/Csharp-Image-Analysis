@@ -63,8 +63,8 @@ namespace Cima.Test.Operations
             double[,] original = IO.LoadImageGrayscaleFloating(Sample.Path.Camera);
             double[,] convolved = Cima.Operations.Convolve(original, kernel);
 
-            TestTools.SavePng(original, "1");
-            TestTools.SavePng(convolved, "2");
+            TestTools.SavePng(original, "original");
+            TestTools.SavePng(convolved, "convolved");
 
             Assert.AreEqual(Cima.Statistics.Mean(convolved), Cima.Statistics.Mean(original), .01);
         }
@@ -83,8 +83,9 @@ namespace Cima.Test.Operations
             double[,] convolved = Cima.Operations.Convolve(original, kernel);
             Cima.Operations.AddInPlace(convolved, .5);
 
-            TestTools.SavePng(original, "1");
-            TestTools.SavePng(convolved, "2");
+            TestTools.SavePng(original, "original");
+            TestTools.SavePng(convolved, "convolved");
+
             Assert.AreEqual(.5, Cima.Statistics.Mean(convolved), .01);
         }
 
@@ -102,27 +103,40 @@ namespace Cima.Test.Operations
             double[,] convolved = Cima.Operations.Convolve(original, kernel);
             Cima.Operations.AddInPlace(convolved, .5);
 
-            TestTools.SavePng(original, "1");
-            TestTools.SavePng(convolved, "2");
+            TestTools.SavePng(original, "original");
+            TestTools.SavePng(convolved, "convolved");
+
             Assert.AreEqual(.5, Cima.Statistics.Mean(convolved), .01);
         }
 
         [Test]
         public void Test_Convolve_Sobel()
         {
-            // https://en.wikipedia.org/wiki/Sobel_operator
 
             double[,] original = IO.LoadImageGrayscaleFloating(Sample.Path.Camera);
 
-            double[,] kernelHorizontal = { { -1, -1, -1 }, { 0, 0, 0 }, { 1, 1, 1 }, };
+            // https://en.wikipedia.org/wiki/Sobel_operator
+            double[,] kernelHorizontal =
+            {
+                { 1, 2, 1 },
+                { 0, 0, 0 },
+                { -1, -2, -1 },
+            };
+
+            double[,] kernelVertical =
+            {
+                { 1, 0, -1 },
+                { 2, 0, -2 },
+                { 1, 0, -1 },
+            };
+
             double[,] convolvedHorizontal = Cima.Operations.Convolve(original, kernelHorizontal);
-
-            double[,] kernelVertical = { { -1, 0, 1 }, { -1, 0, 1 }, { -1, 0, 1 }, };
             double[,] convolvedVertical = Cima.Operations.Convolve(original, kernelVertical);
-
             double[,] output = Cima.Operations.Magnitude(convolvedHorizontal, convolvedVertical);
 
-            TestTools.SavePng(output, "2");
+            TestTools.SavePng(original, "original");
+            TestTools.SavePng(output, "output");
+
             Assert.NotZero(Cima.Statistics.Mean(output));
             Assert.Less(Cima.Statistics.Mean(output), .5);
         }
