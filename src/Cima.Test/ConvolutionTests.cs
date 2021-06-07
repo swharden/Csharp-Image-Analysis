@@ -17,8 +17,7 @@ namespace Cima.Test
                 { 0, 0, 0 },
             };
 
-            Random rand = new(0);
-            double[,] original = Generate2D.Random(rand, 300, 200);
+            double[,] original = IO.LoadImageGrayscaleFloating(Sample.Path.Camera);
             double[,] convolved = ImageMath.Convolve(original, kernel);
             double[,] contracted = Operations.Contract(original, 1);
 
@@ -35,8 +34,7 @@ namespace Cima.Test
                 { 0, 0, 0 },
             };
 
-            Random rand = new(0);
-            double[,] original = Generate2D.Random(rand, 300, 200);
+            double[,] original = IO.LoadImageGrayscaleFloating(Sample.Path.Camera);
             double[,] convolved = ImageMath.Convolve(original, kernel);
 
             Assert.Less(ImageMath.Mean(convolved), ImageMath.Mean(original));
@@ -52,8 +50,7 @@ namespace Cima.Test
                 { 0, 0, 0 },
             };
 
-            Random rand = new(0);
-            double[,] original = Generate2D.Random(rand, 300, 200);
+            double[,] original = IO.LoadImageGrayscaleFloating(Sample.Path.Camera);
             double[,] convolved = ImageMath.Convolve(original, kernel);
 
             Assert.Greater(ImageMath.Mean(convolved), ImageMath.Mean(original));
@@ -63,15 +60,13 @@ namespace Cima.Test
         public void Test_Convolve_Blur()
         {
             double[,] kernel = Generate2D.SolidGray(5, 5, 1.0 / 25);
-
-            Random rand = new(0);
-            double[,] original = Generate2D.Random(rand, 300, 200);
+            double[,] original = IO.LoadImageGrayscaleFloating(Sample.Path.Camera);
             double[,] convolved = ImageMath.Convolve(original, kernel);
 
             TestTools.SavePng(original, "1");
             TestTools.SavePng(convolved, "2");
 
-            Assert.AreEqual(ImageMath.Mean(convolved), ImageMath.Mean(original), .001);
+            Assert.AreEqual(ImageMath.Mean(convolved), ImageMath.Mean(original), .01);
         }
 
         [Test]
