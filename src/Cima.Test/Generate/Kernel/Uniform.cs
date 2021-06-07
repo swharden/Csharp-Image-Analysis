@@ -23,7 +23,7 @@ namespace Cima.Test.Generate.Kernel
         public void Test_Values_MatchThoseGiven(int val)
         {
             double[,] kernel = Cima.Generate.Kernel.Uniform(3, val);
-            foreach (double v in Operations.Flatten(kernel))
+            foreach (double v in Cima.Operations.Flatten(kernel))
                 Assert.AreEqual(val, v);
         }
 

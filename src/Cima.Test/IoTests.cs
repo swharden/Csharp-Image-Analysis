@@ -31,8 +31,8 @@ namespace Cima.Test
         {
             // compare hash to that calculated with Python/PIL
             var bytes3d = IO.LoadImage(Sample.Path.Cat);
-            var bytes1d = Operations.Flatten(bytes3d);
-            string hash = Operations.MD5(bytes1d);
+            var bytes1d = Cima.Operations.Flatten(bytes3d);
+            string hash = Cima.Operations.MD5(bytes1d);
             Assert.AreEqual("4cbc8458da90b6c4b2dcf19e51656619", hash);
         }
 
@@ -42,9 +42,9 @@ namespace Cima.Test
             // compare hash to that calculated with Python/PIL
             byte[,,] bytes3d = IO.LoadImage(Sample.Path.Coins);
             byte[,] bytes2d = IO.GetChannel(bytes3d);
-            byte[] bytes1d = Operations.Flatten(bytes2d);
+            byte[] bytes1d = Cima.Operations.Flatten(bytes2d);
             Console.WriteLine(bytes1d.Length);
-            string hash = Operations.MD5(bytes1d);
+            string hash = Cima.Operations.MD5(bytes1d);
             Assert.AreEqual("651a9e413b9cc780d6ae9c5eca027c76", hash);
         }
 
@@ -54,12 +54,12 @@ namespace Cima.Test
             string saveFilePath = "test_save_rgb.png";
 
             byte[,,] originalBytes = IO.LoadImage(Sample.Path.Cat);
-            string originalHash = Operations.MD5(originalBytes);
+            string originalHash = Cima.Operations.MD5(originalBytes);
             Assert.AreEqual("4cbc8458da90b6c4b2dcf19e51656619", originalHash);
             IO.SavePng(originalBytes, saveFilePath);
 
             byte[,,] newBytes = IO.LoadImage(saveFilePath);
-            string newHash = Operations.MD5(newBytes);
+            string newHash = Cima.Operations.MD5(newBytes);
             Assert.AreEqual(originalHash, newHash);
         }
 
@@ -73,8 +73,8 @@ namespace Cima.Test
 
             byte[,,] bytes3d = IO.LoadImage(saveFilePath);
             byte[,] bytes2d = IO.GetChannel(bytes3d);
-            byte[] bytes1d = Operations.Flatten(bytes2d);
-            string hash = Operations.MD5(bytes1d);
+            byte[] bytes1d = Cima.Operations.Flatten(bytes2d);
+            string hash = Cima.Operations.MD5(bytes1d);
             Assert.AreEqual("651a9e413b9cc780d6ae9c5eca027c76", hash);
         }
 
@@ -100,13 +100,13 @@ namespace Cima.Test
             byte[,,] bytes1 = IO.LoadImage(loadFilePath);
             Assert.AreEqual(bytes1.GetLength(0), height);
             Assert.AreEqual(bytes1.GetLength(1), width);
-            string originalHash = Operations.MD5(bytes1);
+            string originalHash = Cima.Operations.MD5(bytes1);
 
             // save the image to a test file and re-load it
             string saveFilePath = $"test_{filename}.png";
             IO.SavePng(bytes1, saveFilePath);
             byte[,,] newBitmap = IO.LoadImage(saveFilePath);
-            string newHash = Operations.MD5(newBitmap);
+            string newHash = Cima.Operations.MD5(newBitmap);
 
             // ensure the loaded data is identical
             Assert.AreEqual(originalHash, newHash);

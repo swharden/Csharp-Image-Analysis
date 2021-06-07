@@ -70,7 +70,7 @@ namespace Cima
 
             Rectangle rect = new(0, 0, bmp.Width, bmp.Height);
             BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
-            int byteCount = Math.Abs(bmpData.Stride) * bmp.Height;
+            int byteCount = System.Math.Abs(bmpData.Stride) * bmp.Height;
             byte[] input = new byte[byteCount];
             Marshal.Copy(bmpData.Scan0, input, 0, byteCount);
             bmp.UnlockBits(bmpData);
