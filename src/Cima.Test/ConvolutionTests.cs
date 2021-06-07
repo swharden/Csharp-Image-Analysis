@@ -111,5 +111,25 @@ namespace Cima.Test
             TestTools.SavePng(convolved, "2");
             Assert.AreEqual(.5, ImageMath.Mean(convolved), .01);
         }
+
+        [Test]
+        public void Test_Convolve_Sobel()
+        {
+            // https://en.wikipedia.org/wiki/Sobel_operator
+
+            double[,] original = IO.LoadImageGrayscaleFloating(Sample.Path.Camera);
+
+            double[,] kernelHorizontal = { { -1, -1, -1 }, { 0, 0, 0 }, { 1, 1, 1 }, };
+            double[,] convolvedHorizontal = ImageMath.Convolve(original, kernelHorizontal);
+
+            double[,] kernelVertical = { { -1, 0, 1 }, { -1, 0, 1 }, { -1, 0, 1 }, };
+            double[,] convolvedVertical = ImageMath.Convolve(original, kernelVertical);
+
+            double[,] output = Operations.Magnitude(convolvedHorizontal, convolvedVertical);
+
+            TestTools.SavePng(output, "2");
+            Assert.NotZero(ImageMath.Mean(output));
+            Assert.Less(ImageMath.Mean(output), .5);
+        }
     }
 }

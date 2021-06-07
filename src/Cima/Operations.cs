@@ -116,5 +116,24 @@ namespace Cima
 
             return output;
         }
+
+        /// <summary>
+        /// Return the magnitude of A and B combined (square root of [a squared plus b squared])
+        /// </summary>
+        public static double[,] Magnitude(double[,] a, double[,] b)
+        {
+            if (a is null || b is null || a.GetLength(0) != b.GetLength(0) || a.GetLength(1) != b.GetLength(1))
+                throw new ArgumentException("a and b must have the same dimensions");
+
+            int height = a.GetLength(0);
+            int width = a.GetLength(1);
+
+            double[,] c = new double[height, width];
+            for (int y = 0; y < height; y++)
+                for (int x = 0; x < width; x++)
+                    c[y, x] = Math.Sqrt(a[y, x] * a[y, x] + b[y, x] * b[y, x]);
+
+            return c;
+        }
     }
 }
