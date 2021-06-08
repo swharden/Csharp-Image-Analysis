@@ -1,8 +1,24 @@
 # Csharp Image Analysis
 
-**This repository contains notes and code related to quantitative analysis and transformation of scientific images using pure C#.**
+**This repository contains notes and code related to image transformation and analysis using pure C#.** 
 
-There are many useful image analysis and transformation libraries available for .NET (links below). The primary goal of this repository is to organize code samples and notes for educational purposes. A secondary goal of this repository is to collect useful image manipulation and analysis code in one place under a MIT license so developers can copy/paste what they need without taking on a large framework or sticky license.
+The primary goal of this repository is to organize code samples and notes for educational purposes. A secondary goal of this repository is to collect useful image manipulation and analysis code in one place under a MIT license so developers can copy/paste what they need without taking on a large framework or sticky license. 
+
+## Example Operations
+
+Code that generated these images is in the test project.
+
+### Edge Detection
+
+Original | Left Edge | Top Edge | [Sobel](https://en.wikipedia.org/wiki/Sobel_operator)
+---|---|---|---
+![](data/analyzed/original.png)|![](data/analyzed/edge-left.png)|![](data/analyzed/edge-top.png)|![](data/analyzed/edge-sobel.png)
+
+### Blur and Sharpen
+Original | Box Blur | Gaussian Blur | Sharpen
+---|---|---|---
+![](data/analyzed/original.png)|![](data/analyzed/blur-box.png)|![](data/analyzed/blur-gaussian.png)|![](data/analyzed/sharpen.png)
+
 
 ## Resources
 
