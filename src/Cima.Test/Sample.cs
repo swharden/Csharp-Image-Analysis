@@ -16,6 +16,7 @@ namespace Cima.Test
         {
             public static string Astronaut => System.IO.Path.Combine(ImageFolder, "astronaut.png");
             public static string Cat => System.IO.Path.Combine(ImageFolder, "cat.png");
+            public static string CatSmall => System.IO.Path.Combine(ImageFolder, "cat-124x82.png");
             public static string Camera => System.IO.Path.Combine(ImageFolder, "camera.png");
             public static string Coins => System.IO.Path.Combine(ImageFolder, "coins.png");
             public static string Coffee => System.IO.Path.Combine(ImageFolder, "coffee.png");
@@ -25,6 +26,7 @@ namespace Cima.Test
             public static void Test_Files_Exist()
             {
                 Assert.That(System.IO.File.Exists(Cat));
+                Assert.That(System.IO.File.Exists(CatSmall));
                 Assert.That(System.IO.File.Exists(Camera));
                 Assert.That(System.IO.File.Exists(Coins));
                 Assert.That(System.IO.File.Exists(Astronaut));
@@ -36,6 +38,7 @@ namespace Cima.Test
         public static class Bitmap
         {
             public static System.Drawing.Bitmap Cat => new(Path.Cat);
+            public static System.Drawing.Bitmap CatSmall => new(Path.CatSmall);
             public static System.Drawing.Bitmap Camera => new(Path.Camera);
             public static System.Drawing.Bitmap Astronaut => new(Path.Astronaut);
             public static System.Drawing.Bitmap Coins => new(Path.Coins);
@@ -46,6 +49,7 @@ namespace Cima.Test
             public static void Test_Bitmaps_AreValid()
             {
                 Assert.IsNotNull(Cat);
+                Assert.IsNotNull(CatSmall);
                 Assert.IsNotNull(Camera);
                 Assert.IsNotNull(Astronaut);
                 Assert.IsNotNull(Coffee);
