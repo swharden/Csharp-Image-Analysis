@@ -136,6 +136,21 @@ namespace Cima
             return c;
         }
 
+        public static void NormalizeInPlace(double[,] data)
+        {
+            int height = data.GetLength(0);
+            int width = data.GetLength(1);
+
+            double sum = 0;
+            for (int i = 0; i < height; i++)
+                for (int j = 0; j < width; j++)
+                    sum += data[i, j];
+
+            for (int i = 0; i < height; i++)
+                for (int j = 0; j < width; j++)
+                    data[i, j] /= sum;
+        }
+
         /// <summary>
         /// Convolve the 2D array using weights defined by a kernel.
         /// The output will be shrunk by the size of the kernel.
