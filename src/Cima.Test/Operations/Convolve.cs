@@ -69,6 +69,25 @@ namespace Cima.Test.Operations
             Assert.AreEqual(Cima.Statistics.Mean(convolved), Cima.Statistics.Mean(original), .01);
         }
 
+        [Test]
+        public void Test_Convolve_Sharpen()
+        {
+            double[,] kernel =
+            {
+                { -1, -1, -1 },
+                { -1, 9, -1 },
+                { -1, -1, -1 },
+            };
+
+            double[,] original = IO.LoadImageGrayscaleFloating(Sample.Path.Camera);
+            double[,] convolved = Cima.Operations.Convolve(original, kernel);
+
+            TestTools.SavePng(original, "original");
+            TestTools.SavePng(convolved, "convolved");
+
+            Assert.AreEqual(Cima.Statistics.Mean(convolved), Cima.Statistics.Mean(original), .01);
+        }
+
         [TestCase(5, 0)]
         [TestCase(5, 1)]
         [TestCase(9, 3)]
