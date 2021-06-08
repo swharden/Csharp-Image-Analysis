@@ -57,7 +57,7 @@ namespace Cima.Test.Operations
         }
 
         [Test]
-        public void Test_Convolve_Blur()
+        public void Test_Convolve_BoxBlur()
         {
             double[,] kernel = Generate2D.SolidGray(5, 5, 1.0 / 25);
             double[,] original = IO.LoadImageGrayscaleFloating(Sample.Path.Camera);
@@ -67,6 +67,21 @@ namespace Cima.Test.Operations
             TestTools.SavePng(convolved, "convolved");
 
             Assert.AreEqual(Cima.Statistics.Mean(convolved), Cima.Statistics.Mean(original), .01);
+        }
+
+        [TestCase(5, 0)]
+        [TestCase(5, 1)]
+        [TestCase(9, 3)]
+        //[TestCase(25, 5)]
+        public void Test_Convolve_GaussianBlur(int size, int sigma)
+        {
+            double[,] kernel = Cima.Generate.Kernel.Gaussian2D(size, sigma);
+            double[,] original = IO.LoadImageGrayscaleFloating(Sample.Path.Camera);
+            double[,] convolved = Cima.Operations.Convolve(original, kernel);
+
+            TestTools.SavePng(convolved, $"blur-{sigma:D2}");
+
+            Assert.AreEqual(Cima.Statistics.Mean(convolved), Cima.Statistics.Mean(original), .1);
         }
 
         [Test]
