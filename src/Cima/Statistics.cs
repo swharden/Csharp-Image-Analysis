@@ -49,5 +49,21 @@ namespace Cima
                     data[y, x] = Math.Abs(data[y, x]);
         }
 
+        public static double[] MeanByColumn(double[,] data)
+        {
+            double[] means = new double[data.GetLength(1)];
+
+            int height = data.GetLength(0);
+            int width = data.GetLength(1);
+
+            for (int y = 0; y < height; y++)
+                for (int x = 0; x < width; x++)
+                    means[x] += data[y, x];
+
+            for (int x = 0; x < width; x++)
+                means[x] /= height;
+
+            return means;
+        }
     }
 }
