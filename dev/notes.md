@@ -62,6 +62,40 @@ namespace TestProject1
             Console.WriteLine(string.Join(", ", got.Select(x => x.ToString())));
             Assert.AreEqual(expected, got);
         }
+
+        [TestCase("16bit-01.tif", new double[] { 1321, 1380, 1472, 1526, 1640, 1751, 1791, 1898, 1958, })]
+        [TestCase("16bit-02.tif", new double[] { 400, 376, 376, 383, 383, 396, 383, 357, 388, })]
+        [TestCase("16bit-04.tif", new double[] { 125, 275, 139, 108, 108, 121, 200, 194, 109, })]
+        public void Test_LibTiff_FirstValues(string filename, double[] expected)
+        {
+            string path = System.IO.Path.Combine(TestImageFolder, filename);
+            using Tiff image = Tiff.Open(path, "r");
+
+            int width = image.GetField(TiffTag.IMAGEWIDTH)[0].ToInt();
+            int height = image.GetField(TiffTag.IMAGELENGTH)[0].ToInt();
+            int bytesPerPixel = image.GetField(TiffTag.BITSPERSAMPLE)[0].ToInt() / 8;
+
+            int numberOfStrips = image.NumberOfStrips();
+            byte[] bytes = new byte[numberOfStrips * image.StripSize()];
+            for (int i = 0; i < numberOfStrips; ++i)
+                image.ReadRawStrip(i, bytes, i * image.StripSize(), image.StripSize());
+
+            double[] data = new double[bytes.Length / bytesPerPixel];
+
+            if (bytesPerPixel != 2)
+                throw new NotImplementedException("this routine only works for 16-bit TIFs");
+            for (int i = 0; i < data.Length; i++)
+            {
+                if (image.IsBigEndian())
+                    data[i] = bytes[i * 2 + 1] + (bytes[i * 2] << 8);
+                else
+                    data[i] = bytes[i * 2] + (bytes[i * 2 + 1] << 8);
+            }
+
+            double[] got = data.Take(expected.Length).ToArray();
+            Console.WriteLine(string.Join(", ", got.Select(x => x.ToString())));
+            Assert.AreEqual(expected, got);
+        }
     }
 }
 ```
