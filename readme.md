@@ -8,17 +8,21 @@ The primary goal of this repository is to organize code samples and notes for ed
 
 Code that generated these images is in the test project.
 
+### Blur and Sharpen
+
+Original | Box Blur | Gaussian Blur | Sharpen
+---|---|---|---
+![](data/analyzed/original.png)|![](data/analyzed/blur-box.png)|![](data/analyzed/blur-gaussian.png)|![](data/analyzed/sharpen.png)
+
 ### Edge Detection
 
 Original | Left Edge | Top Edge | [Sobel](https://en.wikipedia.org/wiki/Sobel_operator)
 ---|---|---|---
 ![](data/analyzed/original.png)|![](data/analyzed/edge-left.png)|![](data/analyzed/edge-top.png)|![](data/analyzed/edge-sobel.png)
 
-### Blur and Sharpen
-Original | Box Blur | Gaussian Blur | Sharpen
----|---|---|---
-![](data/analyzed/original.png)|![](data/analyzed/blur-box.png)|![](data/analyzed/blur-gaussian.png)|![](data/analyzed/sharpen.png)
-
+Original Image | Data Area Detection
+---|---
+![](data/analyzed/qrss-original.jpg)|![](data/analyzed/qrss-edges.png)
 
 ## Resources
 
